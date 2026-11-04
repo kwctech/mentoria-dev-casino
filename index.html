@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MENTORIA DEV CASINO // Do Zero ao Seu Primeiro App com IA</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       VARIÁVEIS DE CORES & TEMA HIGH-TECH
+       ========================================================= */
+    :root {
+      --bg: #06080d;
+      --bg-card: rgba(13, 17, 28, 0.75);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --accent-green: #00ff87;
+      --accent-cyan: #60efff;
+      --accent-purple: #8b5cf6;
+      --accent-gold: #ffb703;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-green); }
+
+    /* Canvas e Luzes de Fundo */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      width: 580px;
+      height: 580px;
+      border-radius: 50%;
+      filter: blur(160px);
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 { top: -100px; left: 10%; background: radial-gradient(circle, var(--accent-green), transparent); }
+    .glow-2 { bottom: 10%; right: 10%; background: radial-gradient(circle, var(--accent-purple), transparent); }
+
+    .container {
+      width: 90%;
+      max-width: 1180px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* =========================================================
+       NAVBAR
+       ========================================================= */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 8, 13, 0.85);
+      border-bottom: 1px solid var(--border-card);
+      z-index: 100;
+    }
+
+    .nav-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .logo-badge {
+      font-size: 0.65rem;
+      font-family: var(--font-mono);
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(0, 255, 135, 0.12);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 255, 135, 0.3);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--accent-green); }
+
+    .btn-nav {
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      background: rgba(0, 255, 135, 0.1);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      text-decoration: none;
+      font-weight: 700;
+      transition: 0.3s ease;
+    }
+    .btn-nav:hover {
+      background: var(--accent-green);
+      color: #06080d;
+      box-shadow: 0 0 25px rgba(0, 255, 135, 0.5);
+    }
+
+    /* =========================================================
+       HERO SECTION (FOCO NO INICIANTE)
+       ========================================================= */
+    .hero {
+      padding: 160px 0 60px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 18px;
+      border-radius: 30px;
+      background: rgba(0, 255, 135, 0.08);
+      border: 1px solid rgba(0, 255, 135, 0.3);
+      color: var(--accent-green);
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+      margin-bottom: 2rem;
+    }
+
+    .pulsing-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2.3rem, 5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 1.5rem;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 20%, var(--accent-green) 60%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      max-width: 760px;
+      margin: 0 auto 2.5rem;
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: var(--text-muted);
+    }
+
+    .hero-tags {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-tag-item {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      color: #cbd5e1;
+    }
+    .hero-tag-item.highlight {
+      border-color: rgba(0, 255, 135, 0.4);
+      color: var(--accent-green);
+      background: rgba(0, 255, 135, 0.05);
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 16px 34px;
+      font-size: 1rem;
+      font-weight: 800;
+      border-radius: 10px;
+      color: #06080d;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      box-shadow: 0 0 30px rgba(0, 255, 135, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 45px rgba(0, 255, 135, 0.65);
+    }
+
+    .btn-secondary {
+      padding: 16px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-card);
+      backdrop-filter: blur(10px);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* =========================================================
+       CARD: POR QUE VOCÊ NÃO PRECISA SABER PROGRAMAR
+       ========================================================= */
+    .simple-banner {
+      margin: 40px auto 80px;
+      background: rgba(13, 17, 28, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .simple-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .simple-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(0, 255, 135, 0.12);
+      border: 1px solid rgba(0, 255, 135, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-green);
+      flex-shrink: 0;
+    }
+
+    .simple-text h4 {
+      font-size: 1.05rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .simple-text p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    /* =========================================================
+       SIMULADOR DO CATALOGADOR (VISUAL)
+       ========================================================= */
+    .radar-container {
+      margin: 20px auto 90px;
+      max-width: 860px;
+      background: rgba(10, 14, 23, 0.85);
+      border: 1px solid rgba(0, 255, 135, 0.25);
+      border-radius: 18px;
+      padding: 1.8rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      font-family: var(--font-mono);
+    }
+
+    .radar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+
+    .radar-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--accent-green);
+    }
+
+    .cataloger-stream {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px 0;
+      margin-bottom: 15px;
+    }
+
+    .stream-pill {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-card);
+    }
+    .pill-green { color: var(--accent-green); border-color: rgba(0, 255, 135, 0.4); background: rgba(0, 255, 135, 0.08); }
+    .pill-purple { color: #c084fc; border-color: rgba(192, 132, 252, 0.4); background: rgba(192, 132, 252, 0.08); }
+    .pill-gold { color: var(--accent-gold); border-color: rgba(255, 183, 3, 0.4); background: rgba(255, 183, 3, 0.08); }
+
+    .radar-terminal-log {
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 12px 16px;
+      border-radius: 10px;
+    }
+
+    /* =========================================================
+       O GRANDE FECHAMENTO: SOCIEDADE NO APP FINAL
+       ========================================================= */
+    .partnership-box {
+      margin: 80px 0;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(0, 255, 135, 0.08));
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 22px;
+      padding: clamp(2rem, 5vw, 3.5rem);
+      text-align: center;
+      position: relative;
+    }
+
+    .badge-sociedade {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid var(--accent-purple);
+      color: #c084fc;
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .partnership-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      margin-bottom: 1rem;
+    }
+
+    .partnership-desc {
+      max-width: 720px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+      color: #cbd5e1;
+      line-height: 1.65;
+    }
+
+    /* =========================================================
+       CRONOGRAMA SIMPLIFICADO DAS 5 AULAS (AO VIVO + GRAVADAS)
+       ========================================================= */
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .timeline-classes {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 920px;
+      margin: 0 auto 100px;
+    }
+
+    .class-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 18px;
+      padding: 1.8rem 2.2rem;
+      backdrop-filter: blur(14px);
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 2rem;
+      align-items: center;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .class-card:hover {
+      border-color: rgba(0, 255, 135, 0.4);
+      transform: translateX(4px);
+    }
+
+    .class-meta {
+      text-align: center;
+      border-right: 1px solid var(--border-card);
+      padding-right: 1.5rem;
+    }
+
+    .class-number {
+      font-family: var(--font-heading);
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--accent-green);
+      line-height: 1;
+    }
+
+    .class-duration {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .class-badge-type {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      background: rgba(0, 255, 135, 0.1);
+      border: 1px solid rgba(0, 255, 135, 0.25);
+      border-radius: 4px;
+      color: var(--accent-green);
+      margin-top: 8px;
+    }
+
+    .class-content h3 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .class-content p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      margin-bottom: 0.8rem;
+    }
+
+    .topics-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+    }
+
+    /* =========================================================
+       OFERTA, 10X NO CARTÃO & 2 MESES DE AUTOMA IA
+       ========================================================= */
+    .offer-section {
+      margin: 80px 0 120px;
+    }
+
+    .offer-card-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .offer-card-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-purple), var(--accent-gold));
+      border-radius: 26px;
+      z-index: -1;
+      filter: blur(18px);
+      opacity: 0.4;
+    }
+
+    .offer-card {
+      background: rgba(11, 16, 27, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: clamp(2rem, 5vw, 3.8rem);
+      backdrop-filter: blur(25px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: linear-gradient(135deg, var(--accent-green), #059669);
+      color: #06080d;
+      padding: 7px 25px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom-left-radius: 16px;
+    }
+
+    /* Box de Bônus Especial AUTOMA IA */
+    .automa-bonus-box {
+      background: linear-gradient(135deg, rgba(0, 255, 135, 0.12), rgba(96, 239, 255, 0.08));
+      border: 1.5px solid var(--accent-green);
+      border-radius: 18px;
+      padding: 1.6rem;
+      margin: 2rem 0;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      box-shadow: 0 0 30px rgba(0, 255, 135, 0.15);
+    }
+
+    .automa-icon {
+      flex-shrink: 0;
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      background: rgba(0, 255, 135, 0.2);
+      border: 1px solid var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-green);
+    }
+
+    .automa-info h4 {
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .automa-tag {
+      font-size: 0.72rem;
+      background: var(--accent-green);
+      color: #06080d;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .automa-info p {
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    /* Preço e 10x no Cartão */
+    .installments-banner {
+      margin: 1.8rem 0;
+    }
+
+    .installments-text {
+      font-family: var(--font-heading);
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .installments-text span {
+      color: var(--accent-gold);
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 6px 18px;
+      border-radius: 20px;
+      background: rgba(255, 183, 3, 0.12);
+      border: 1px solid rgba(255, 183, 3, 0.35);
+      color: var(--accent-gold);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .deliverables {
+      list-style: none;
+      max-width: 620px;
+      margin: 0 auto 2.5rem;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .deliverables li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #cbd5e1;
+      font-size: 0.96rem;
+    }
+
+    .check-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      color: var(--accent-green);
+    }
+
+    .btn-cta-giant {
+      width: 100%;
+      max-width: 520px;
+      padding: 19px 34px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+      color: #06080d;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 35px rgba(0, 255, 135, 0.5);
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-cta-giant:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 50px rgba(0, 255, 135, 0.8);
+    }
+
+    .guarantee-badge {
+      margin-top: 15px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-card);
+      padding: 40px 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .class-card { grid-template-columns: 1fr; gap: 1rem; }
+      .class-meta { border-right: none; border-bottom: 1px solid var(--border-card); padding-right: 0; padding-bottom: 1rem; }
+      .automa-bonus-box { flex-direction: column; text-align: center; }
+      .automa-info h4 { justify-content: center; }
+      .simple-banner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Glows e Partículas -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- NAVBAR -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="#" class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-green);">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        DEV CASINO AI
+        <span class="logo-badge">Método para Iniciantes</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#programa">As 5 Aulas</a></li>
+        <li><a href="#sociedade">A Sociedade</a></li>
+        <li><a href="#oferta">Inscrição & Bônus</a></li>
+      </ul>
+
+      <a href="#oferta" class="btn-nav">Garantir Vaga</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="hero-badge">
+        <div class="pulsing-dot"></div>
+        DO ZERO ABSOLUTO • NENHUM CONHECIMENTO PRÉVIO EXIGIDO
+      </div>
+
+      <h1 class="hero-title">
+        Aprenda a Criar Catalogadores e Robôs<br>
+        de Cassino <span class="gradient-text">Sem Precisar Saber Programar</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Com a ajuda das Inteligências Artificiais certas, você não precisa decorar linhas de código. 
+        Vamos te ensinar passo a passo a usar a IA para criar sistemas de análise, bots de entrada automática 
+        e, no final, <strong>vamos desenvolver um aplicativo juntos onde todos seremos sócios</strong>.
+      </p>
+
+      <div class="hero-tags">
+        <span class="hero-tag-item highlight">✓ 100% Para Iniciantes</span>
+        <span class="hero-tag-item">⚡ 5 Aulas Práticas (1h30 a 2h)</span>
+        <span class="hero-tag-item">📹 Todas as Lives Ficam Gravadas</span>
+        <span class="hero-tag-item">🤝 Sociedade no App Final</span>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#oferta" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Quero Aprender do Zero & Ser Sócio
+        </a>
+        <a href="#programa" class="btn-secondary">
+          Ver o Que Vamos Aprender
+        </a>
+      </div>
+    </section>
+
+    <!-- 3 PILARES SIMPLIFICADOS (TIRANDO O MEDO DO INICIANTE) -->
+    <section class="simple-banner">
+      <div class="simple-item">
+        <div class="simple-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.5h-2v-2h2zm0-4h-2V7h2z"/></svg>
+        </div>
+        <div class="simple-text">
+          <h4>Zero Teoria Chata</h4>
+          <p>Você não vai estudar meses de matemática. Focamos direto no que funciona: pedir e a IA gerar o código pronto.</p>
+        </div>
+      </div>
+
+      <div class="simple-item">
+        <div class="simple-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 10l5 5-5 5M4 4v7a4 4 0 0 0 4 4h11"/></svg>
+        </div>
+        <div class="simple-text">
+          <h4>Se Faltar, Está Gravado</h4>
+          <p>Todas as 5 transmissões ficam salvas na área de membros para você assistir no seu tempo e tirar dúvidas.</p>
+        </div>
+      </div>
+
+      <div class="simple-item">
+        <div class="simple-icon">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div class="simple-text">
+          <h4>Sociedade Real</h4>
+          <p>Não é só um curso. No final, construímos um app comercial em conjunto onde todos os alunos são sócios.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIMULADOR VISUAL DO QUE ELES VÃO CRIAR -->
+    <section class="radar-container">
+      <div class="radar-header">
+        <div class="radar-status">
+          <span class="pulsing-dot"></span>
+          EXEMPLO DO QUE SEU ROBÔ VAI FAZER SOZINHO
+        </div>
+        <span style="font-size: 0.75rem; color: #64748b;">STATUS: RASTREANDO AO VIVO</span>
+      </div>
+
+      <div class="cataloger-stream" id="streamPills">
+        <span class="stream-pill pill-green">2.14x</span>
+        <span class="stream-pill pill-purple">1.85x</span>
+        <span class="stream-pill pill-gold">14.80x</span>
+        <span class="stream-pill pill-green">3.40x</span>
+        <span class="stream-pill pill-purple">1.12x</span>
+        <span class="stream-pill pill-green">2.01x</span>
+      </div>
+
+      <div class="radar-terminal-log">
+        <span style="color: var(--accent-green);">[ROBÔ CONECTADO]</span> Lendo os números que acabaram de sair na mesa.<br>
+        <span style="color: var(--accent-gold);">[ANÁLISE FÁCIL]</span> O sistema identificou 3 padrões seguidos.<br>
+        <span style="color: var(--accent-cyan);">[CLIQUE AUTOMÁTICO]</span> O automatizador realiza a aposta sozinho na tela.
+      </div>
+    </section>
+
+    <!-- BLOCO DA SOCIEDADE (O GRANDE FECHAMENTO) -->
+    <section id="sociedade" class="partnership-box">
+      <span class="badge-sociedade">Projeto Prático em Equipe</span>
+      <h2 class="partnership-title">Você Não Termina Apenas com um Certificado.<br>Você Termina Sócio de um Aplicativo.</h2>
+      <p class="partnership-desc">
+        Na aula final, vamos juntar tudo o que fizemos e colocar no ar um 
+        <strong>aplicativo completo e profissional</strong>. Toda a turma e a nossa equipe serão 
+        <strong>sócias oficiais desse projeto</strong>, dividindo os resultados da ferramenta juntos.
+      </p>
+    </section>
+
+    <!-- CRONOGRAMA SIMPLIFICADO DAS 5 AULAS -->
+    <section id="programa">
+      <div class="section-header">
+        <h2 class="section-title">O Passo a Passo das 5 Aulas</h2>
+        <p class="section-desc">Aulas ao vivo de 1h30 a 2h cada (100% gravadas para você rever se faltar).</p>
+      </div>
+
+      <div class="timeline-classes">
+        <!-- AULA 1 -->
+        <div class="class-card">
+          <div class="class-meta">
+            <div class="class-number">01</div>
+            <div class="class-duration">1h30 a 2h</div>
+            <span class="class-badge-type">AULA INICIAL</span>
+          </div>
+          <div class="class-content">
+            <h3>O Começo Fácil: Deixando a IA Programar por Você</h3>
+            <p>
+              Você vai entender o básico de programação sem complicação. Vamos instalar o ambiente de trabalho (as IDEs modernas) e você vai aprender o que são LLMs e como conversar com a IA para ela escrever o código para você.
+            </p>
+            <div class="topics-chips">
+              <span class="chip">Como a IA escreve código</span>
+              <span class="chip">Instalando a ferramenta (IDE)</span>
+              <span class="chip">O que são LLMs</span>
+              <span class="chip">Lógica simples do zero</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AULA 2 -->
+        <div class="class-card">
+          <div class="class-meta">
+            <div class="class-number">02</div>
+            <div class="class-duration">1h30 a 2h</div>
+            <span class="class-badge-type">PRÁTICA</span>
+          </div>
+          <div class="class-content">
+            <h3>Conectando nos Jogos: Criando sua Própria API</h3>
+            <p>
+              Aprenda como fazer o seu computador "conversar" com os jogos de cassino (como Crash, Roleta ou Mines). Vamos criar uma API simples para puxar os números e resultados que estão acontecendo ao vivo na tela.
+            </p>
+            <div class="topics-chips">
+              <span class="chip">O que é uma API de forma simples</span>
+              <span class="chip">Pegando resultados em tempo real</span>
+              <span class="chip">Conexão com os jogos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AULA 3 -->
+        <div class="class-card">
+          <div class="class-meta">
+            <div class="class-number">03</div>
+            <div class="class-duration">1h30 a 2h</div>
+            <span class="class-badge-type">PRÁTICA</span>
+          </div>
+          <div class="class-content">
+            <h3>Criando o Catalogador e o Leitor de Padrões</h3>
+            <p>
+              Vamos montar um sistema que anota automaticamente tudo o que aconteceu nas últimas rodadas. Ele vai analisar quais números mais saíram e avisar no seu Telegram quando houver uma boa oportunidade.
+            </p>
+            <div class="topics-chips">
+              <span class="chip">Guardando o histórico</span>
+              <span class="chip">Análise de tendências</span>
+              <span class="chip">Bot de alertas no Telegram</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AULA 4 -->
+        <div class="class-card">
+          <div class="class-meta">
+            <div class="class-number">04</div>
+            <div class="class-duration">1h30 a 2h</div>
+            <span class="class-badge-type">AUTOMAÇÃO</span>
+          </div>
+          <div class="class-content">
+            <h3>Criando o Robô que Clica Sozinho (Automatizador)</h3>
+            <p>
+              Chega de ficar na frente do computador. Vamos criar um robô que faz a aposta sozinho na tela na hora certa, com trava de segurança para proteger o saldo (Stop Win e Stop Loss).
+            </p>
+            <div class="topics-chips">
+              <span class="chip">Automação de cliques</span>
+              <span class="chip">Entradas no segundo exato</span>
+              <span class="chip">Proteção de banca</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AULA 5 -->
+        <div class="class-card" style="border-color: rgba(139, 92, 246, 0.5);">
+          <div class="class-meta">
+            <div class="class-number" style="color: var(--accent-purple);">05</div>
+            <div class="class-duration">1h30 a 2h</div>
+            <span class="class-badge-type" style="color: var(--accent-purple); border-color: var(--accent-purple);">O GRANDE FINAL</span>
+          </div>
+          <div class="class-content">
+            <h3>Nosso Aplicativo Pronto e Lançamento da Sociedade</h3>
+            <p>
+              Vamos juntar todo o trabalho em um aplicativo com uma interface moderna e bonita. Vamos colocar o app na internet e organizar a participação de todos os alunos como sócios do projeto final.
+            </p>
+            <div class="topics-chips">
+              <span class="chip">Aplicativo funcionando na web</span>
+              <span class="chip">Lançamento oficial</span>
+              <span class="chip">Sociedade com toda a turma</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO DE OFERTA & INSCRIÇÃO -->
+    <section id="oferta" class="offer-section">
+      <div class="offer-card-wrapper">
+        <div class="offer-card">
+          <span class="top-badge">VAGAS LIMITADAS</span>
+
+          <h2 style="font-family: var(--font-heading); font-size: 2.2rem; margin-bottom: 0.8rem;">
+            Garanta Sua Vaga na Turma + Sociedade no App
+          </h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 620px; margin: 0 auto;">
+            Acesso completo às 5 Lives com gravações liberadas para rever quando quiser, modelos prontos e participação no app final.
+          </p>
+
+          <!-- BÔNUS VIP: 2 MESES DE AUTOMA IA -->
+          <div class="automa-bonus-box">
+            <div class="automa-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+            </div>
+            <div class="automa-info">
+              <h4>
+                BÔNUS EXCLUSIVO: SISTEMA AUTOMA IA
+                <span class="automa-tag">2 Meses Grátis</span>
+              </h4>
+              <p>
+                Ao entrar para a mentoria hoje, você ganha <strong>60 dias de acesso 100% gratuito</strong> 
+                à plataforma <strong>AUTOMA IA</strong> para rodar seus robôs e catalogadores na nuvem sem precisar deixar o computador ligado.
+              </p>
+            </div>
+          </div>
+
+          <!-- PARCELAMENTO EM ATÉ 10X NO CARTÃO -->
+          <div class="installments-banner">
+            <div class="installments-text">
+              Em até <span>10x no Cartão</span>
+            </div>
+            <div class="card-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              Parcelamento facilitado em até 10 vezes no cartão de crédito
+            </div>
+          </div>
+
+          <!-- BENEFÍCIOS -->
+          <ul class="deliverables">
+            <li>
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              5 Aulas ao Vivo (1h30 a 2h) ensinadas passo a passo do zero
+            </li>
+            <li>
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <strong>Gravação liberada de todas as lives</strong> (assista mesmo se faltar)
+            </li>
+            <li>
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <strong>2 Meses Grátis</strong> da plataforma AUTOMA IA inclusos
+            </li>
+            <li>
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Códigos e comandos prontos para você apenas copiar e colar
+            </li>
+            <li>
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <strong>Sociedade garantida no aplicativo final</strong> que criaremos juntos
+            </li>
+          </ul>
+
+          <button class="btn-cta-giant" onclick="alert('Redirecionando para o pagamento seguro com opção de até 10x no cartão...')">
+            QUERO ENTRAR NA TURMA E SER SÓCIO DO APP
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+
+          <div class="guarantee-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Pagamento 100% Seguro • Grupo Exclusivo de Alunos • 7 Dias de Garantia
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2026 DEV CASINO AI • Curso Básico Passo a Passo com IA • Parcelamento em até 10x no cartão • AUTOMA IA</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT: CANVAS & ANIMAÇÃO DE MULTIPLICADORES -->
+  <script>
+    /* 1. FUNDO COM REDE DE PARTÍCULAS */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles;
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = Math.random() * 1.5 + 1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 255, 135, 0.4)';
+        ctx.fill();
+      }
+    }
+
+    particles = Array.from({ length: 55 }, () => new Particle());
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0, 255, 135, ${0.15 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* 2. SIMULAÇÃO DO STREAM DE VELAS DO CATALOGADOR */
+    const streamContainer = document.getElementById('streamPills');
+    setInterval(() => {
+      const mult = (Math.random() * 6 + 1).toFixed(2);
+      const pill = document.createElement('span');
+      pill.className = 'stream-pill';
+      
+      if (mult > 5) {
+        pill.classList.add('pill-gold');
+      } else if (mult > 2) {
+        pill.classList.add('pill-green');
+      } else {
+        pill.classList.add('pill-purple');
+      }
+
+      pill.textContent = `${mult}x`;
+      streamContainer.prepend(pill);
+
+      if (streamContainer.children.length > 8) {
+        streamContainer.removeChild(streamContainer.lastChild);
+      }
+    }, 2800);
+  </script>
+</body>
+</html>
